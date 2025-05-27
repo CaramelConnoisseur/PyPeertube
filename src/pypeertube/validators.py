@@ -1,3 +1,5 @@
+"""Validators for Peertube."""
+
 from re import match
 
 

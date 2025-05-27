@@ -39,7 +39,7 @@ class ApiClient:
         oauth = oauth_response.json()
 
         auth_response = post(
-            f"{base_url}{AuthEndpoints.LOGIN.value}",
+            base_url + AuthEndpoints.LOGIN.value,
             data={
                 "client_id": oauth["client_id"],
                 "client_secret": oauth["client_secret"],
@@ -64,19 +64,18 @@ class ApiClient:
         }
 
     @property
-    def access_token(self) -> str:
-        return self._access_token
-
-    @property
     def base_url(self) -> str:
+        """The base URL of the Peertube instance."""
         return self._base_url
 
     @property
     def username(self) -> str:
+        """The authenticated username."""
         return self._username
 
     @property
     def session(self) -> Session:
+        """A requests.Session configured with the required authentication header."""
         return self._session
 
     def logout(self) -> bool:
@@ -91,7 +90,7 @@ class ApiClient:
 
         self._session.close()
         resp = post(
-            f"{self._base_url}{AuthEndpoints.LOGOUT.value}",
+            self._base_url + AuthEndpoints.LOGOUT.value,
             headers={"Authorization": f"Bearer {self._access_token}"},
             timeout=3,
         )

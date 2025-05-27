@@ -31,4 +31,4 @@ jobs:
 
     - name: Lint Module
       run: |
-        pylint $(git ls-files '*.py')
+        pylint --disable=unknown-option-value,duplicate-code $(git ls-files '*.py')

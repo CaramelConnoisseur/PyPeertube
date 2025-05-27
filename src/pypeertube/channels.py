@@ -164,7 +164,7 @@ def create_channel(  # final call raises exception pylint: disable=inconsistent-
         pass
 
     response = client.session.post(
-        f"{client.base_url}{ChannelEndpoints.CREATE_VIDEO_CHANNEL.value}",
+        client.base_url + ChannelEndpoints.CREATE_VIDEO_CHANNEL.value,
         json={
             "displayName": display_name,
             "name": name,
@@ -282,8 +282,8 @@ def set_channel_avatar(client: ApiClient, channel: str, avatar_path: str):
 
     with open(avatar_path, "br") as f:
         response = client.session.post(
-            f"{client.base_url}"
-            f"{ChannelEndpoints.SET_VIDEO_CHANNEL_AVATAR.value.format(channel=channel)}",
+            client.base_url
+            + ChannelEndpoints.SET_VIDEO_CHANNEL_AVATAR.value.format(channel=channel),
             files={
                 "avatarfile": (
                     basename(avatar_path),
@@ -315,7 +315,8 @@ def set_channel_banner(client: ApiClient, channel: str, banner_path: str):
 
     with open(banner_path, "br") as f:
         response = client.session.post(
-            f"{client.base_url}{ChannelEndpoints.SET_VIDEO_CHANNEL_BANNER.value.format(channel=channel)}",
+            client.base_url
+            + ChannelEndpoints.SET_VIDEO_CHANNEL_BANNER.value.format(channel=channel),
             files={
                 "bannerfile": (
                     basename(banner_path),
@@ -329,7 +330,8 @@ def set_channel_banner(client: ApiClient, channel: str, banner_path: str):
         raise_api_bad_response_error(response)
 
 
-def update_channel(  # pylint: disable=inconsistent-return-statements,too-many-arguments,too-many-positional-arguments
+# pylint: disable=inconsistent-return-statements,too-many-arguments,too-many-positional-arguments
+def update_channel(
     client: ApiClient,
     name: str,
     display_name: Optional[str] = None,

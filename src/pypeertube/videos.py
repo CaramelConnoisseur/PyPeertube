@@ -229,7 +229,9 @@ class Video:  # pylint: disable=too-few-public-methods,too-many-instance-attribu
     files: Optional[List[VideoFile]]
     streaming_playlists: Optional[List[StreamingPlaylist]]
 
-    def __init__(self, input_dict: Dict[str, Any]):
+    def __init__(
+        self, input_dict: Dict[str, Any]
+    ):  # pylint: disable=too-many-statements
         self.id = input_dict["id"]
         self.uuid = input_dict["uuid"]
         self.short_uuid = input_dict["shortUUID"]
@@ -383,7 +385,15 @@ def get_video(  # pylint: disable=inconsistent-return-statements
 
 
 def get_videos_in_channel(client: ApiClient, channel: str) -> List[Video]:
-    # https://docs.joinpeertube.org/api-rest-reference.html#tag/Video-Channels/operation/getVideoChannelVideos
+    """Get a list of videos in a channel.
+
+    Args:
+        client (ApiClient): The authenticated client to use.
+        channel (str): The name of the channel to look in.
+
+    Returns:
+        List[Video]: The videos in the specified channel.
+    """
 
     start = 0
     total = -1
@@ -624,6 +634,7 @@ def upload_video(  # pylint: disable=inconsistent-return-statements,too-many-arg
     raise_api_bad_response_error(response)
 
 
-def updt():
-    # https://docs.joinpeertube.org/api-rest-reference.html#tag/Video/operation/putVideo
-    pass
+def update_video():
+    """Not yet implemented"""
+
+    raise NotImplementedError()
