@@ -1,0 +1,33 @@
+# SPDX-FileCopyrightText: 2025 CaramelConnoisseur
+#
+# SPDX-License-Identifier: GPL-3.0-only
+name: Build & Release Module
+on:
+  release:
+    types: [published]
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: PyPI
+    steps:
+    - uses: actions/checkout@v4
+      name: Checkout Project
+
+    - uses: actions/setup-python@v5
+      name: Setup Python
+      with:
+        python-version: '3.x'
+
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip setuptools
+        pip install build
+
+    - name: Build Module
+      run: python -m build
+
+    - name: Publish to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1

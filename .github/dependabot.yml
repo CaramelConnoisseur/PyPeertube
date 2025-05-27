@@ -1,0 +1,14 @@
+# SPDX-FileCopyrightText: 2025 CaramelConnoisseur
+#
+# SPDX-License-Identifier: GPL-3.0-only
+---
+version: 2
+updates:
+  - directory: /
+    package-ecosystem: github-actions
+    schedule:
+      interval: weekly
+  - directory: /
+    package-ecosystem: pip
+    schedule:
+      interval: weekly

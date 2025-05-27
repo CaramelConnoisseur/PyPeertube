@@ -1,0 +1,41 @@
+# SPDX-FileCopyrightText: 2025 CaramelConnoisseur
+#
+# SPDX-License-Identifier: GPL-3.0-only
+
+[project]
+name = "pypeertube"
+description = "Python module to interact with a Peertube instance's API."
+version = "0.0.1"
+readme = "README.md"
+requires-python = "~=3.8"
+license = "GPL-3.0-only"
+authors = [
+    {name = "CaramelConnoisseur", email = "me@caramelconnoisseur.dev"},
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Natural Language :: English",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3 :: Only",
+  "Topic :: Multimedia",
+  "Topic :: Multimedia :: Video",
+  "Topic :: Multimedia :: Video :: Display",
+  "Typing :: Typed"
+]
+dependencies = [
+  "requests~=2.32.3",
+]
+
+[project.urls]
+Source = "https://github.com/CaramelConnoisseur/PyPeertube"
+
+[build-system]
+requires = ["setuptools >= 80.9.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.package-data]
+"pypeertube" = ["py.typed"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
