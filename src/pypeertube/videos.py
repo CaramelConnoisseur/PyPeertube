@@ -504,7 +504,8 @@ def search_videos(  # pylint: disable=:too-many-arguments,too-many-locals,too-ma
     return matches
 
 
-def upload_video(  # pylint: disable=inconsistent-return-statements,too-many-arguments,too-many-branches,too-many-locals
+# pylint: disable=inconsistent-return-statements,too-many-arguments,too-many-branches,too-many-locals
+def upload_video(
     client: ApiClient,
     channel_id: int,
     name: str,
@@ -634,7 +635,97 @@ def upload_video(  # pylint: disable=inconsistent-return-statements,too-many-arg
     raise_api_bad_response_error(response)
 
 
-def update_video():
+# pylint: disable=too-many-arguments,too-many-locals,too-many-branches,inconsistent-return-statements
+def update_video(
+    client: ApiClient,
+    video_id: str,
+    *,
+    category: Category,
+    comments_policy: CommentsPolicy,
+    description: str,
+    download_enabled: bool,
+    language: str,
+    licence: Licence,
+    name: str,
+    nsfw: bool,
+    nsfw_flags: int,
+    nsfw_summary: str,
+    originally_published_at: datetime,
+    preview_file: str,
+    privacy: Privacy,
+    support: str,
+    tags: List[str],
+    thumbnail_file: str,
+    video_passwords: List[str],
+    wait_transcoding: bool,
+) -> Video:
     """Not yet implemented"""
 
-    raise NotImplementedError()
+    update = {}
+    if category is not None:
+        update["category"] = category.value
+    if comments_policy is not None:
+        update["commentsPolicy"] = comments_policy.value
+    if description is not None:
+        update["description"] = description
+    if download_enabled is not None:
+        update["downloadEnabled"] = download_enabled
+    if language is not None:
+        update["language"] = language
+    if licence is not None:
+        update["licence"] = licence.value
+    if name is not None:
+        update["name"] = name
+    if nsfw is not None:
+        update["nsfw"] = nsfw
+    if nsfw_flags is not None:
+        update["nsfwFlags"] = nsfw_flags
+    if nsfw_summary is not None:
+        update["nsfwSummary"] = nsfw_summary
+    if originally_published_at is not None:
+        update["originallyPublishedAt"] = originally_published_at.strftime(
+            "%Y-%m-%d %H:%M"
+        )
+    if privacy is not None:
+        update["privacy"] = privacy.value
+    if support is not None:
+        update["support"] = support
+    if tags is not None:
+        update["tags"] = tags
+    if video_passwords is not None:
+        update["videoPasswords"] = video_passwords
+    if wait_transcoding is not None:
+        update["waitTranscoding"] = wait_transcoding
+
+    with (
+        open(preview_file, "br") if preview_file is not None else nullcontext()
+    ) as preview_f, (
+        open(thumbnail_file, "br") if thumbnail_file is not None else nullcontext()
+    ) as thumbnail_f:
+        files = {}
+        if preview_file is not None:
+            files["previewfile"] = (
+                basename(preview_file),
+                preview_f,
+                guess_type(preview_file)[0],
+            )
+        if thumbnail_file is not None:
+            files["thumbnailfile"] = (
+                basename(thumbnail_file),
+                thumbnail_f,
+                guess_type(thumbnail_file)[0],
+            )
+
+        if len(update) == 0 and len(files) == 0:
+            return
+        response = client.session.put(
+            client.base_url + VideoEndpoints.VIDEO.value.format(id=video_id),
+            data=update,
+            files=files,
+            timeout=300,
+        )
+
+    if response.status_code == 204:
+        return get_video(client, video_id)
+
+    raise_api_bad_response_error(response)
