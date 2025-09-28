@@ -3,9 +3,10 @@
 from contextlib import nullcontext
 from datetime import datetime
 from enum import Enum
+from io import BufferedReader
 from os.path import basename
 from mimetypes import guess_type
-from typing import Any, Dict, Optional, List, Union
+from typing import Any, Dict, Optional, List, Tuple, Union
 
 from . import Account
 from .channels import VideoChannel
@@ -157,7 +158,7 @@ class VideoScheduledUpdate:  # pylint: disable=too-few-public-methods
     new_privacy_level: Privacy
 
     def __init__(self, input_dict: Dict[str, Union[int, str]]):
-        self.update_at = input_dict["updateAt"]
+        self.update_at = datetime.fromisoformat(str(input_dict["updateAt"]))
         self.new_privacy_level = Privacy(input_dict["privacy"])
 
     def __repr__(self):
@@ -363,7 +364,7 @@ def delete_video(client: ApiClient, video_id: str):
 
 def get_video(  # pylint: disable=inconsistent-return-statements
     client: ApiClient, video_id: str
-) -> Video:
+) -> Video:  # pyright: ignore[reportReturnType]
     """Get details about a video on Peertube.
 
     Args:
@@ -465,7 +466,11 @@ def search_videos(  # pylint: disable=:too-many-arguments,too-many-locals,too-ma
         else:
             search_parameters["categoryOneOf"] = []
             for cat in category:
-                search_parameters["categoryOneOf"].append(cat.value)
+                search_parameters[
+                    "categoryOneOf"
+                ].append(  # pyright: ignore[reportUnknownMemberType]
+                    cat.value
+                )
     if duration_max is not None:
         search_parameters["durationMax"] = duration_max
     if duration_min is not None:
@@ -475,9 +480,9 @@ def search_videos(  # pylint: disable=:too-many-arguments,too-many-locals,too-ma
     if live is not None:
         search_parameters["isLive"] = live
     if published_after is not None:
-        search_parameters["startDate"] = published_before.isoformat()
+        search_parameters["startDate"] = published_after.isoformat()
     if published_before is not None:
-        search_parameters["endDate"] = published_after.isoformat()
+        search_parameters["endDate"] = published_before.isoformat()
     if tags_and is not None:
         search_parameters["tagsAllOf"] = tags_and
     if tags_or is not None:
@@ -527,7 +532,7 @@ def upload_video(
     thumbnail_file: Optional[str] = None,
     video_passwords: Optional[List[str]] = None,
     wait_transcoding: Optional[bool] = None,
-) -> Video:
+) -> Video:  # pyright: ignore[reportReturnType]
     """Upload a video to Peertube.
 
     Args:
@@ -566,7 +571,10 @@ def upload_video(
         Video: The uploaded video.
     """
 
-    metadata = {"channelId": channel_id, "name": name[:120]}
+    metadata: Dict[str, Union[str, int, List[str]]] = {
+        "channelId": channel_id,
+        "name": name[:120],
+    }
     if category is not None:
         metadata["category"] = category.value
     if comments_policy is not None:
@@ -603,20 +611,20 @@ def upload_video(
     ) as preview_f, (
         open(thumbnail_file, "br") if thumbnail_file is not None else nullcontext()
     ) as thumbnail_f:
-        files = {
+        files: Dict[str, Tuple[str, BufferedReader, Optional[str]]] = {
             "videofile": (
                 basename(video_file),
                 video_f,
                 guess_type(video_file)[0],
             )
         }
-        if preview_file is not None:
+        if preview_file is not None and preview_f is not None:
             files["previewfile"] = (
                 basename(preview_file),
                 preview_f,
                 guess_type(preview_file)[0],
             )
-        if thumbnail_file is not None:
+        if thumbnail_file is not None and thumbnail_f is not None:
             files["thumbnailfile"] = (
                 basename(thumbnail_file),
                 thumbnail_f,
@@ -626,7 +634,7 @@ def upload_video(
         response = client.session.post(
             client.base_url + VideoEndpoints.UPLOAD_VIDEO.value,
             data=metadata,
-            files=files,
+            files=files,  # pyright: ignore[reportArgumentType]
             timeout=900,
         )
     if response.status_code == 200:
@@ -640,28 +648,28 @@ def update_video(
     client: ApiClient,
     video_id: str,
     *,
-    category: Category,
-    comments_policy: CommentsPolicy,
-    description: str,
-    download_enabled: bool,
-    language: str,
-    licence: Licence,
-    name: str,
-    nsfw: bool,
-    nsfw_flags: int,
-    nsfw_summary: str,
-    originally_published_at: datetime,
-    preview_file: str,
-    privacy: Privacy,
-    support: str,
-    tags: List[str],
-    thumbnail_file: str,
-    video_passwords: List[str],
-    wait_transcoding: bool,
-) -> Video:
+    category: Optional[Category],
+    comments_policy: Optional[CommentsPolicy],
+    description: Optional[str],
+    download_enabled: Optional[bool],
+    language: Optional[str],
+    licence: Optional[Licence],
+    name: Optional[str],
+    nsfw: Optional[bool],
+    nsfw_flags: Optional[int],
+    nsfw_summary: Optional[str],
+    originally_published_at: Optional[datetime],
+    preview_file: Optional[str],
+    privacy: Optional[Privacy],
+    support: Optional[str],
+    tags: Optional[List[str]],
+    thumbnail_file: Optional[str],
+    video_passwords: Optional[List[str]],
+    wait_transcoding: Optional[bool],
+) -> Optional[Video]:
     """Not yet implemented"""
 
-    update = {}
+    update: Dict[str, Union[bool, int, str, List[str]]] = {}
     if category is not None:
         update["category"] = category.value
     if comments_policy is not None:
@@ -702,14 +710,14 @@ def update_video(
     ) as preview_f, (
         open(thumbnail_file, "br") if thumbnail_file is not None else nullcontext()
     ) as thumbnail_f:
-        files = {}
-        if preview_file is not None:
+        files: Dict[str, Tuple[str, BufferedReader, Optional[str]]] = {}
+        if preview_file is not None and preview_f is not None:
             files["previewfile"] = (
                 basename(preview_file),
                 preview_f,
                 guess_type(preview_file)[0],
             )
-        if thumbnail_file is not None:
+        if thumbnail_file is not None and thumbnail_f is not None:
             files["thumbnailfile"] = (
                 basename(thumbnail_file),
                 thumbnail_f,
@@ -721,7 +729,7 @@ def update_video(
         response = client.session.put(
             client.base_url + VideoEndpoints.VIDEO.value.format(id=video_id),
             data=update,
-            files=files,
+            files=files, # pyright: ignore[reportArgumentType]
             timeout=300,
         )
 
