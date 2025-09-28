@@ -2,6 +2,11 @@
 
 Python module to interact with a Peertube instance's API.
 
+## Example
+
+Search for videos tagged `animal` or `dog` and containing `puppy` in the title or description,
+printing the video's title and link of each result.
+
 ```python
 from pypeertube.client import ApiClient
 from pypeertube.videos import search_videos
