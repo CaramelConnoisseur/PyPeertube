@@ -36,7 +36,7 @@ class ApiClient:
         if not base_url.endswith("/"):
             base_url = base_url + "/"
 
-        oauth_response = get(base_url + AuthEndpoints.OAUTH_CLIENT.value, timeout=3)
+        oauth_response = get(base_url + AuthEndpoints.OAUTH_CLIENT.value, timeout=10)
         oauth_response.raise_for_status()
         oauth = oauth_response.json()
 
@@ -49,7 +49,7 @@ class ApiClient:
                 "username": username,
                 "password": password,
             },
-            timeout=3,
+            timeout=10,
         )
         auth_response.raise_for_status()
 
@@ -105,6 +105,6 @@ class ApiClient:
         resp = post(
             self._base_url + AuthEndpoints.LOGOUT.value,
             headers={"Authorization": f"Bearer {self._access_token}"},
-            timeout=3,
+            timeout=10,
         )
         return resp.json()["success"]

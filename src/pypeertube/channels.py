@@ -171,7 +171,7 @@ def create_channel(  # final call raises exception pylint: disable=inconsistent-
             "description": description,
             "sponsor": sponsor,
         },
-        timeout=3,
+        timeout=10,
     )
     if response.status_code == 200:
         return get_channel(client, name)
@@ -376,7 +376,7 @@ def update_channel(
         response = client.session.put(
             f"{client.base_url}{ChannelEndpoints.VIDEO_CHANNEL.value.format(channel=name)}",
             json=json,
-            timeout=3,
+            timeout=10,
         )
         if response.status_code == 204:
             return get_channel(client, name)

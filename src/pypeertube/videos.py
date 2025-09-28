@@ -355,7 +355,7 @@ def delete_video(client: ApiClient, video_id: str):
 
     response = client.session.delete(
         client.base_url + VideoEndpoints.VIDEO.value.format(id=video_id),
-        timeout=5,
+        timeout=10,
     )
     if response.status_code != 204:
         raise_api_bad_response_error(response)
@@ -376,7 +376,7 @@ def get_video(  # pylint: disable=inconsistent-return-statements
 
     response = client.session.get(
         client.base_url + VideoEndpoints.VIDEO.value.format(id=video_id),
-        timeout=5,
+        timeout=10,
     )
     if response.status_code == 200:
         return Video(response.json())
@@ -403,7 +403,7 @@ def get_videos_in_channel(client: ApiClient, channel: str) -> List[Video]:
             client.base_url
             + VideoEndpoints.VIDEOS_IN_CHANNEL.value.format(channel=channel),
             params={"count": 100, "start": start},
-            timeout=5,
+            timeout=10,
         )
         if response.status_code != 200:
             raise_api_bad_response_error(response)
