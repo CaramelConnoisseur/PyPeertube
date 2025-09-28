@@ -4,7 +4,7 @@ from datetime import datetime
 from enum import Enum
 from mimetypes import guess_type
 from os.path import basename
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from . import Account, Image, validators
 from .client import ApiClient
@@ -136,7 +136,7 @@ def create_channel(  # final call raises exception pylint: disable=inconsistent-
     display_name: str,
     description: Optional[str] = None,
     sponsor: Optional[str] = None,
-) -> VideoChannel:
+) -> VideoChannel: # pyright: ignore[reportReturnType]
     """Create a new Video Channel on Peertube.
 
     Args:
@@ -171,7 +171,7 @@ def create_channel(  # final call raises exception pylint: disable=inconsistent-
             "description": description,
             "sponsor": sponsor,
         },
-        timeout=3,
+        timeout=10,
     )
     if response.status_code == 200:
         return get_channel(client, name)
@@ -203,7 +203,7 @@ def delete_channel(client: ApiClient, channel: str):
 
 def get_channel(  # final call raises exception pylint: disable=inconsistent-return-statements
     client: ApiClient, name: str
-) -> VideoChannel:
+) -> VideoChannel: # pyright: ignore[reportReturnType]
     """Get the numeric identifier of a given video channel.
 
     Args:
@@ -290,7 +290,7 @@ def set_channel_avatar(client: ApiClient, channel: str, avatar_path: str):
                     f,
                     guess_type(avatar_path)[0],
                 )
-            },
+            }, # pyright: ignore[reportArgumentType]
             timeout=30,
         )
     if not response.status_code == 200:
@@ -323,7 +323,7 @@ def set_channel_banner(client: ApiClient, channel: str, banner_path: str):
                     f,
                     guess_type(banner_path)[0],
                 )
-            },
+            }, # pyright: ignore[reportArgumentType]
             timeout=30,
         )
     if not response.status_code == 200:
@@ -338,23 +338,24 @@ def update_channel(
     description: Optional[str] = None,
     support: Optional[str] = None,
     update_support_on_videos: bool = False,
-) -> VideoChannel:
+) -> VideoChannel: # pyright: ignore[reportReturnType]
     """Create a new Video Channel on Peertube.
 
     Args:
         client (ApiClient): The authenticated client to use.
         name (str): The name of the new channel. Up to 50 alphanumeric, `_` or `.` characters.
-        display_name (str), optional): _description_. Defaults to None.
-        description (Optional[str]): _description_. Defaults to None.
-        support (Optional[str], optional): _description_. Defaults to None.
-        update_support_on_videos (bool, optional): Defaults to False.
+        display_name (str), optional): The new display name. Defaults to None (unchanged).
+        description (Optional[str]): The new channel description. Defaults to None (unchanged).
+        support (Optional[str], optional): The new support message. Defaults to None (unchanged).
+        update_support_on_videos (bool, optional): 
+            Whether to update the support message on all channel videos. Defaults to False.
 
     Raises:
-        PeertubeNonChannelExistsError: _description_
-        PeerTubeAPIBadResponseError: _description_
+        PeertubeNonChannelExistsError: If the target channel doesn't exist.
+        PeerTubeAPIBadResponseError: If an unexpected response is returned by the API.
 
     Returns:
-        int: _description_
+        VideoChannel: The updated channel.
     """
 
     if not validators.channel_name(name):
@@ -362,7 +363,7 @@ def update_channel(
 
     get_channel(client, name)
 
-    json = {}
+    json: Dict[str, Union[str, bool]] = {}
     if display_name is not None:
         json["displayName"] = display_name
     if description is not None:
@@ -376,7 +377,7 @@ def update_channel(
         response = client.session.put(
             f"{client.base_url}{ChannelEndpoints.VIDEO_CHANNEL.value.format(channel=name)}",
             json=json,
-            timeout=3,
+            timeout=10,
         )
         if response.status_code == 204:
             return get_channel(client, name)

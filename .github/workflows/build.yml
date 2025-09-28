@@ -13,10 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: PyPI
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
       name: Checkout Project
 
-    - uses: actions/setup-python@v5
+    - uses: actions/setup-python@v6
       name: Setup Python
       with:
         python-version: '3.x'

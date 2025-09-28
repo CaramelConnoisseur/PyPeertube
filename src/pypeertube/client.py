@@ -1,6 +1,8 @@
 """A client to talk to Peertube"""
 
 from enum import Enum
+from types import TracebackType
+from typing import Optional
 
 from requests import get, post, Session
 
@@ -34,7 +36,7 @@ class ApiClient:
         if not base_url.endswith("/"):
             base_url = base_url + "/"
 
-        oauth_response = get(base_url + AuthEndpoints.OAUTH_CLIENT.value, timeout=3)
+        oauth_response = get(base_url + AuthEndpoints.OAUTH_CLIENT.value, timeout=10)
         oauth_response.raise_for_status()
         oauth = oauth_response.json()
 
@@ -47,7 +49,7 @@ class ApiClient:
                 "username": username,
                 "password": password,
             },
-            timeout=3,
+            timeout=10,
         )
         auth_response.raise_for_status()
 
@@ -62,6 +64,17 @@ class ApiClient:
             "User-Agent": "Mozilla/5.0 +https://github.com/CaramelConnoisseur/peertube-python "
             f"Peertube-Python/{__version__}",
         }
+
+    def __enter__(self) -> "ApiClient":
+        return self
+
+    def __exit__(
+        self,
+        _exception_type: Optional[type[BaseException]],
+        _exception_value: Optional[BaseException],
+        _traceback: Optional[TracebackType],
+    ) -> None:
+        self.logout()
 
     @property
     def base_url(self) -> str:
@@ -92,6 +105,6 @@ class ApiClient:
         resp = post(
             self._base_url + AuthEndpoints.LOGOUT.value,
             headers={"Authorization": f"Bearer {self._access_token}"},
-            timeout=3,
+            timeout=10,
         )
         return resp.json()["success"]
