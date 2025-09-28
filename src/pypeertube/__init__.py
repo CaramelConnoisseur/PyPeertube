@@ -1,16 +1,16 @@
 """Tools to upload videos to a PeerTube instance"""
 
-from dataclasses import dataclass
-from datetime import datetime
-from typing import Any, Dict, List, Optional
-
 __author__ = "CaramelConnoisseur"
 __copyright__ = "Copyright 2025, CaramelConnoisseur"
 __email__ = "me@CaramelConnoisseur.dev"
 __license__ = "GPL-3.0-only"
 __maintainer__ = "CaramelConnoisseur"
-__status__ = "Prototype"
-__version__ = "0.0.1"
+__status__ = "Production"
+__version__ = "1.0.0"
+
+from dataclasses import dataclass
+from datetime import datetime
+from typing import Any, Dict, List, Optional
 
 
 @dataclass
