@@ -1,6 +1,8 @@
 """A client to talk to Peertube"""
 
 from enum import Enum
+from types import TracebackType
+from typing import Optional
 
 from requests import get, post, Session
 
@@ -62,6 +64,17 @@ class ApiClient:
             "User-Agent": "Mozilla/5.0 +https://github.com/CaramelConnoisseur/peertube-python "
             f"Peertube-Python/{__version__}",
         }
+
+    def __enter__(self) -> "ApiClient":
+        return self
+
+    def __exit__(
+        self,
+        _exception_type: Optional[type[BaseException]],
+        _exception_value: Optional[BaseException],
+        _traceback: Optional[TracebackType],
+    ) -> None:
+        self.logout()
 
     @property
     def base_url(self) -> str:
