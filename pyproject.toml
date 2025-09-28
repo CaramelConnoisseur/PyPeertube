@@ -7,7 +7,7 @@ name = "pypeertube"
 description = "Python module to interact with a Peertube instance's API."
 version = "1.0.0"
 readme = "README.md"
-requires-python = "~=3.8"
+requires-python = "~=3.9"
 license = "GPL-3.0-only"
 authors = [
     {name = "CaramelConnoisseur", email = "me@caramelconnoisseur.dev"},
