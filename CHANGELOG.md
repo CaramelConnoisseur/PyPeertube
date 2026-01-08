@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.1.0
+
+* feat: playlist support
+
 ## v1.0.0
 
 * feat: implement context manager support
