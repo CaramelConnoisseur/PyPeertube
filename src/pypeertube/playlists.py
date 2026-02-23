@@ -422,6 +422,8 @@ def get_videos_in_playlist(client: ApiClient, playlist_id: int) -> List[Playlist
         body = response.json()
         total = body["total"]
         for video in body["data"]:
+            if video["video"] is None:
+                continue
             videos.append(PlaylistVideo(video))
     return videos
 
