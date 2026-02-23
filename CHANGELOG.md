@@ -4,6 +4,10 @@
 
 * feat: playlist support
 
+## v1.0.1
+
+* chore: pin minimum urllib3 version (CVE-2025-66471)
+
 ## v1.0.0
 
 * feat: implement context manager support
