@@ -5,7 +5,7 @@
 [project]
 name = "pypeertube"
 description = "Python module to interact with a Peertube instance's API."
-version = "1.0.0"
+version = "1.0.1"
 readme = "README.md"
 requires-python = "~=3.9"
 license = "GPL-3.0-only"
@@ -25,6 +25,7 @@ classifiers = [
 ]
 dependencies = [
   "requests~=2.32.5",
+  "urllib3>=2.6.3"
 ]
 
 [project.urls]
