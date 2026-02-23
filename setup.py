@@ -7,4 +7,4 @@
 from setuptools import setup
 
 if __name__ == "__main__":
-    setup()
+    setup(install_requires=["urllib3>=2.6.3"])
