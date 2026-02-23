@@ -6,7 +6,7 @@ __email__ = "me@CaramelConnoisseur.dev"
 __license__ = "GPL-3.0-only"
 __maintainer__ = "CaramelConnoisseur"
 __status__ = "Production"
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 from dataclasses import dataclass
 from datetime import datetime
