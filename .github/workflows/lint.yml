@@ -4,7 +4,8 @@
 name: Lint Module
 on:
   push:
-  pull_request:
+    branches-ignore:
+      - main
 permissions:
   contents: read
 jobs:
