@@ -63,6 +63,11 @@ class PlaylistEndpoints(Enum):
     PLAYLISTS_IN_CHANNEL = "api/v1/video-channels/{channel}/video-playlists"
     """Gets list of playlists in a given channel"""
 
+    REORDER_PLAYLISTS_IN_CHANNEL = (
+        "api/v1/video-channels/{channel}/video-playlists/reorder"
+    )
+    """Reorder channel playlists"""
+
     VIDEOS_IN_PLAYLIST = "api/v1/video-playlists/{playlist_id}/videos"
     """Gets list of videos within a playlist"""
 
@@ -428,7 +433,42 @@ def get_videos_in_playlist(client: ApiClient, playlist_id: int) -> List[Playlist
     return videos
 
 
-# def reorder_channel_playlists():
+def reorder_channel_playlists(
+    client: ApiClient,
+    channel: str,
+    move_after: int,
+    first_item_index: int,
+    count: int = 1,
+) -> Literal[True]:
+    """Reorder channel playlists.
+
+    Args:
+        client (ApiClient): The client to
+        channel (str): The video channel.
+        move_after (int): New position for the block to reorder.
+        first_item_index (int): Start position of the element to reorder.
+        count (int, optional): How many element from first_item_index to reorder. Defaults to 1.
+
+    Returns:
+        Literal[True]: If the reorder is successful
+    """
+
+    response = client.session.post(
+        client.base_url
+        + PlaylistEndpoints.REORDER_PLAYLISTS_IN_CHANNEL.value.format(channel=channel),
+        json={
+            "insertAfterPosition": move_after,
+            "startPosition": first_item_index,
+            "reorderLength": count,
+        },
+        timeout=30,
+    )
+
+    if response.status_code != 200:
+        raise_api_bad_response_error(response)
+
+    return True
+
 
 # def reorder_playlist_videos():
 
