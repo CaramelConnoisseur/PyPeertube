@@ -12,7 +12,15 @@ from . import Account
 from .channels import VideoChannel
 from .client import ApiClient
 from .exceptions import raise_api_bad_response_error
-from .videos import Privacy, Video
+from .videos import Video
+
+
+class PlaylistPrivacy(Enum):
+    """The privacy setting of a playlist."""
+
+    PUBLIC = 1
+    UNLISTED = 2
+    PRIVATE = 3
 
 
 class PlaylistType(Enum):
@@ -87,7 +95,7 @@ class Playlist:
     embed_path: str
     is_local: bool
     owner: Account
-    privacy: Privacy
+    privacy: PlaylistPrivacy
     thumbnail_path: str
     type: PlaylistType
     updated_at: datetime
@@ -111,7 +119,7 @@ class Playlist:
         self.embed_path = input_dict["embedPath"]
         self.is_local = input_dict["isLocal"]
         self.owner = Account(input_dict["ownerAccount"])
-        self.privacy = Privacy(input_dict["privacy"]["id"])
+        self.privacy = PlaylistPrivacy(input_dict["privacy"]["id"])
         self.thumbnail_path = input_dict["thumbnailPath"]
         self.type = PlaylistType(input_dict["type"]["id"])
         self.updated_at = input_dict["updatedAt"]
@@ -172,7 +180,7 @@ def create_playlist(
     channel_id: int,
     display_name: str,
     description: Optional[str] = None,
-    privacy: Privacy = Privacy.PUBLIC,
+    privacy: PlaylistPrivacy = PlaylistPrivacy.PUBLIC,
     thumbnail_file: Optional[str] = None,
 ) -> Playlist:
     """Create a new playlist.
@@ -509,7 +517,7 @@ def update_playlist(
     channel_id: Optional[int] = None,
     display_name: Optional[str] = None,
     description: Optional[str] = None,
-    privacy: Optional[Privacy] = None,
+    privacy: Optional[PlaylistPrivacy] = None,
     thumbnail_file: Optional[str] = None,
 ) -> Playlist:
     """Update an existing playlist.
