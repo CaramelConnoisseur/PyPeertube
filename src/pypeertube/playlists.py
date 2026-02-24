@@ -254,6 +254,34 @@ def delete_playlist(client: ApiClient, playlist_id: int) -> Literal[True]:
     return True
 
 
+def delete_video_from_playlist(
+    client: ApiClient, playlist_id: int, playlist_item_id: int
+) -> Literal[True]:
+    """Delete a video from a playlist.
+
+    Args:
+        client (ApiClient): The client to use to talk to the API.
+        playlist_id (int): The numeric ID of the playlist to remove from.
+        playlist_item_id (int: The numeric ID of the video to remove.
+
+    Returns:
+        True: If the video is removed successfully.
+    """
+
+    response = client.session.delete(
+        client.base_url
+        + PlaylistEndpoints.PLAYLIST_ITEM.value.format(
+            playlist_id=playlist_id, playlist_item_id=playlist_item_id
+        ),
+        timeout=30,
+    )
+
+    if response.status_code != 204:
+        raise_api_bad_response_error(response)
+
+    return True
+
+
 def get_playlist(client: ApiClient, playlist_id: int) -> Playlist:
     """Get a playlist.
 
