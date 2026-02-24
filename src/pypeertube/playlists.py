@@ -257,8 +257,6 @@ def get_playlist(client: ApiClient, playlist_id: int) -> Playlist:
     Args:
         client (ApiClient): The client to use to talk to the API.
         playlist_id (int): The numeric ID of the playlist.
-        load_videos (bool, optional): Whether to load the list of videos in the playlist.
-            Defaults to False.
 
     Returns:
         Playlist: The requested playlist.
