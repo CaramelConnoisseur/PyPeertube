@@ -79,6 +79,9 @@ class PlaylistEndpoints(Enum):
     REORDER_VIDEOS_IN_PLAYLIST = "api/v1/video-playlists/{playlist_id}/videos/reorder"
     """Reorder playlist elements"""
 
+    SEARCH_PLAYLISTS = "api/v1/search/video-playlists"
+    """Search for playlists"""
+
     VIDEOS_IN_PLAYLIST = "api/v1/video-playlists/{playlist_id}/videos"
     """Gets list of videos within a playlist"""
 
@@ -572,6 +575,51 @@ def remove_video_from_playlist(
         raise_api_bad_response_error(response)
 
     return True
+
+
+def search_playlists(
+    client: ApiClient, search: str, host: Optional[str] = None
+) -> List[Playlist]:
+    """Search playlists.
+
+    Args:
+        client (ApiClient): The client to use to talk to the API.
+        search (str): String to search.
+        host (Optional[str], optional): Find elements owned by this host. Defaults to None.
+
+    Returns:
+        List[Playlist]: Matching playlists.
+    """
+
+    start = 0
+    total = -1
+    params: Dict[str, Union[int, str]] = {
+        "count": 100,
+        "sort": "createdAt",
+        "start": start,
+        "search": search,
+    }
+    if host is not None:
+        params["host"] = host
+
+    playlists: List[Playlist] = []
+    while len(playlists) != total:
+        params["start"] = start
+        response = client.session.get(
+            client.base_url + PlaylistEndpoints.SEARCH_PLAYLISTS.value,
+            params=params,
+            timeout=30,
+        )
+        if response.status_code != 200:
+            raise_api_bad_response_error(response)
+
+        start = start + 100
+        body = response.json()
+        total = body["total"]
+        for playlist in body["data"]:
+            playlists.append(Playlist(client, playlist))
+
+    return playlists
 
 
 # pylint: disable=too-many-arguments
