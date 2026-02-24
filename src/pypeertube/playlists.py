@@ -266,7 +266,7 @@ def get_playlist(client: ApiClient, playlist_id: int) -> Playlist:
     return Playlist(client, response.json())
 
 
-def get_playlists(
+def get_playlists_on_instance(
     client: ApiClient, playlist_type: Optional[PlaylistType] = None
 ) -> List[Playlist]:
     """Get all playlists in a channel.
