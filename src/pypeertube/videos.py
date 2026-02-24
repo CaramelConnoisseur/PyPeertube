@@ -342,6 +342,9 @@ class VideoEndpoints(Enum):
     VIDEO_SEARCH = "api/v1/search/videos"
     """Search for videos"""
 
+    VIDEOS_IN_ACCOUNT = "api/v1/accounts/{account}/videos"
+    """Gets list of videos in a given account"""
+
     VIDEOS_IN_CHANNEL = "api/v1/video-channels/{channel}/videos"
     """Gets list of videos in a given channel"""
 
@@ -383,6 +386,36 @@ def get_video(  # pylint: disable=inconsistent-return-statements
         return Video(response.json())
 
     raise_api_bad_response_error(response)
+
+def get_videos_in_account(client: ApiClient, account: str) -> List[Video]:
+    """Get a list of videos in a account.
+
+    Args:
+        client (ApiClient): The authenticated client to use.
+        account (str): The name of the account to look in.
+
+    Returns:
+        List[Video]: The videos in the specified account.
+    """
+
+    start = 0
+    total = -1
+    videos: List[Video] = []
+    while len(videos) != total:
+        response = client.session.get(
+            client.base_url
+            + VideoEndpoints.VIDEOS_IN_ACCOUNT.value.format(account=account),
+            params={"count": 100, "start": start},
+            timeout=10,
+        )
+        if response.status_code != 200:
+            raise_api_bad_response_error(response)
+        start = start + 100
+        body = response.json()
+        total = body["total"]
+        for video in body["data"]:
+            videos.append(Video(video))
+    return videos
 
 
 def get_videos_in_channel(client: ApiClient, channel: str) -> List[Video]:

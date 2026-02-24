@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.1.0
+
+* feat: playlist support
+
 ## v1.0.1
 
 * chore: pin minimum urllib3 version (CVE-2025-66471)
