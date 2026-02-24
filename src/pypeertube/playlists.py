@@ -470,7 +470,7 @@ def reorder_channel_playlists(
         timeout=30,
     )
 
-    if response.status_code != 200:
+    if response.status_code != 204:
         raise_api_bad_response_error(response)
 
     return True
