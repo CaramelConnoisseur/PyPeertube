@@ -613,3 +613,34 @@ def update_playlist(
         raise_api_bad_response_error(response)
 
     return get_playlist(client, playlist_id)
+
+
+def update_playlist_video_start_end(
+    client: ApiClient, playlist_id: int, playlist_item_id: int, start: int, end: int
+) -> Literal[True]:
+    """Update a playlist element.
+
+    Args:
+        client (ApiClient): The client to use to talk to the API.
+        playlist_id (int): The numeric ID of the playlist to update.
+        playlist_item_id (int): The numeric ID video in the playlist to update.
+        start (int): The start second of the sub-clip to add.
+        end (int): The end second of the sub-clip to add.
+
+    Returns:
+        Literal[True]: If the update is successful.
+    """
+
+    response = client.session.put(
+        client.base_url
+        + PlaylistEndpoints.PLAYLIST_ITEM.value.format(
+            playlist_id=playlist_id, playlist_item_id=playlist_item_id
+        ),
+        data={"startTimestamp": start, "stopTimestamp": end},
+        timeout=30,
+    )
+
+    if response.status_code != 204:
+        raise_api_bad_response_error(response)
+
+    return True
