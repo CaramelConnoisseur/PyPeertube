@@ -76,6 +76,9 @@ class PlaylistEndpoints(Enum):
     )
     """Reorder channel playlists"""
 
+    REORDER_VIDEOS_IN_PLAYLIST = "api/v1/video-playlists/{playlist_id}/videos/reorder"
+    """Reorder playlist elements"""
+
     VIDEOS_IN_PLAYLIST = "api/v1/video-playlists/{playlist_id}/videos"
     """Gets list of videos within a playlist"""
 
@@ -449,14 +452,14 @@ def reorder_channel_playlists(
     """Reorder channel playlists.
 
     Args:
-        client (ApiClient): The client to
+        client (ApiClient): The client to use to talk to the API.
         channel (str): The video channel.
         move_after (int): New position for the block to reorder.
         first_item_index (int): Start position of the element to reorder.
         count (int, optional): How many element from first_item_index to reorder. Defaults to 1.
 
     Returns:
-        Literal[True]: If the reorder is successful
+        Literal[True]: If the reorder is successful.
     """
 
     response = client.session.post(
@@ -476,7 +479,43 @@ def reorder_channel_playlists(
     return True
 
 
-# def reorder_playlist_videos():
+def reorder_playlist_videos(
+    client: ApiClient,
+    playlist_id: int,
+    move_after: int,
+    first_item_index: int,
+    count: int = 1,
+) -> Literal[True]:
+    """Reorder playlist videos.
+
+    Args:
+        client (ApiClient): The client to use to talk to the API.
+        playlist_id (int): The ID of the playlist to reorder.
+        move_after (int): New position for the block to reorder.
+        first_item_index (int): Start position of the element to reorder.
+        count (int, optional): How many element from first_item_index to reorder. Defaults to 1.
+
+    Returns:
+        Literal[True]: If the reorder is successful.
+    """
+
+    response = client.session.post(
+        client.base_url
+        + PlaylistEndpoints.REORDER_VIDEOS_IN_PLAYLIST.value.format(
+            playlist_id=playlist_id
+        ),
+        json={
+            "insertAfterPosition": move_after,
+            "startPosition": first_item_index,
+            "reorderLength": count,
+        },
+        timeout=30,
+    )
+
+    if response.status_code != 204:
+        raise_api_bad_response_error(response)
+
+    return True
 
 
 def remove_video_from_playlist(
