@@ -24,8 +24,11 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Install Module and Dependencies
-      run: pip install -e .
+    - name: Install PyLint and Module
+      run: |
+        python -m pip install --upgrade pip setuptools
+        pip install pylint
+        pip install -e .
 
     - name: Lint Module
       run: |
