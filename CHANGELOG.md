@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.1.1
+
+* chore: loosen request version constraints
+
 ## v1.1.0
 
 * feat: playlist support
